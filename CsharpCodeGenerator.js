@@ -106,9 +106,6 @@ define(function (require, exports, module) {
                 }
             });
         } else if (elem instanceof type.UMLClass) {
-
-
-
             // AnnotationType
             if (isAnnotationType) {
                 console.log('annotationType generate');
@@ -224,8 +221,6 @@ define(function (require, exports, module) {
      * @param {Object} options
      */
     CsharpCodeGenerator.prototype.writeEnum = function (codeWriter, elem, options) {
-
-
         var i, len, terms = [];
         // Doc
         this.writeDoc(codeWriter, elem.documentation, options);
@@ -249,8 +244,6 @@ define(function (require, exports, module) {
 
         codeWriter.outdent();
         codeWriter.writeLine("}");
-
-
     };
 
 
@@ -262,8 +255,6 @@ define(function (require, exports, module) {
      * @param {Object} options
      */
     CsharpCodeGenerator.prototype.writeInterface = function (codeWriter, elem, options) {
-
-
         var i, len, terms = [];
 
         // Doc
@@ -336,8 +327,6 @@ define(function (require, exports, module) {
 
         codeWriter.outdent();
         codeWriter.writeLine("}");
-
-
     };
 
 
@@ -348,9 +337,6 @@ define(function (require, exports, module) {
      * @param {Object} options
      */
     CsharpCodeGenerator.prototype.writeAnnotationType = function (codeWriter, elem, options) {
-
-
-
         var i, len, terms = [];
         // Doc
         var doc = elem.documentation.trim();
@@ -452,11 +438,8 @@ define(function (require, exports, module) {
             }
         }
 
-
         codeWriter.outdent();
         codeWriter.writeLine("}");
-
-
     };
 
     /**
@@ -466,14 +449,12 @@ define(function (require, exports, module) {
      * @param {Object} options
      */
     CsharpCodeGenerator.prototype.writeClass = function (codeWriter, elem, options) {
-
-
         var i, len, terms = [];
 
         // Doc
         var doc = elem.documentation.trim();
         if (ProjectManager.getProject().author && ProjectManager.getProject().author.length > 0) {
-            doc += "\n@author " + ProjectManager.getProject().author;
+            doc += "\nAuthor " + ProjectManager.getProject().author;
         }
         this.writeDoc(codeWriter, doc, options);
 
@@ -566,11 +547,8 @@ define(function (require, exports, module) {
             }
         }
 
-
         codeWriter.outdent();
         codeWriter.writeLine("}");
-
-
     };
 
 
@@ -590,13 +568,17 @@ define(function (require, exports, module) {
 
             // doc
             var doc = elem.documentation.trim();
-            _.each(params, function (param) {
-                doc += "\n@param " + param.name + " " + param.documentation;
-            });
-            if (returnParam) {
-                doc += "\n@return " + returnParam.documentation;
-            }
             this.writeDoc(codeWriter, doc, options);
+
+            // params
+            _.each(params, function (param) {
+                codeWriter.writeLine("/// <param name=\"" + param.name + "\">" + param.documentation + "</param>");
+            });
+
+            // return
+            if (returnParam) {
+                codeWriter.writeLine("/// <returns>" + returnParam.documentation + "</returns>");
+            }
 
             // modifiers
             var _modifiers = this.getModifiers(elem);
@@ -691,7 +673,6 @@ define(function (require, exports, module) {
             }
         }
 
-
         // multiplicity
         if (elem.multiplicity) {
             if (_.contains(["0..*", "1..*", "*"], elem.multiplicity.trim())) {
@@ -704,6 +685,7 @@ define(function (require, exports, module) {
                 _type += "[]";
             }
         }
+
         return _type;
     };
 
@@ -716,7 +698,6 @@ define(function (require, exports, module) {
      */
 
     CsharpCodeGenerator.prototype.writeMemberVariable = function (codeWriter, elem, options) {
-
         if (elem.name.length > 0) {
             var terms = [];
             // doc
@@ -734,7 +715,7 @@ define(function (require, exports, module) {
             if (elem.defaultValue && elem.defaultValue.length > 0) {
                 terms.push("= " + elem.defaultValue);
             }
-            
+
             // property
             if (elem.stereotype === "property") {
                 codeWriter.writeLine(terms.join(" ") + " {");
@@ -784,7 +765,6 @@ define(function (require, exports, module) {
      * @param {Object} options
      */
     CsharpCodeGenerator.prototype.writeDoc = function (codeWriter, text, options) {
-
         var i, len, lines;
         if (options.csharpDoc && _.isString(text)) {
             console.log("write Doc");
@@ -793,7 +773,7 @@ define(function (require, exports, module) {
             for (i = 0, len = lines.length; i < len; i++) {
                 codeWriter.writeLine("/// " + lines[i]);
             }
-            codeWriter.writeLine("/// <summary>");
+            codeWriter.writeLine("/// </summary>");
         }
     };
 
@@ -804,13 +784,14 @@ define(function (require, exports, module) {
      */
     CsharpCodeGenerator.prototype.getVisibility = function (elem) {
         switch (elem.visibility) {
-        case UML.VK_PUBLIC:
-            return "public";
-        case UML.VK_PROTECTED:
-            return "protected";
-        case UML.VK_PRIVATE:
-            return "private";
+            case UML.VK_PUBLIC:
+                return "public";
+            case UML.VK_PROTECTED:
+                return "protected";
+            case UML.VK_PRIVATE:
+                return "private";
         }
+
         return null;
     };
 
