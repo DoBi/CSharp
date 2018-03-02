@@ -195,7 +195,8 @@ define(function (require, exports, module) {
             path = _.map(elem._parent.getPath(this.baseModel), function (e) { return e.name; }).join(".");
         }
         if (path) {
-            codeWriter.writeLine("namespace " + path + "{");
+            codeWriter.writeLine("namespace " + path);
+            codeWriter.writeLine("{");
             codeWriter.indent();
         }
         if (writeFunction === "writeAnnotationType") {
@@ -234,7 +235,9 @@ define(function (require, exports, module) {
         terms.push("enum");
         terms.push(elem.name);
 
-        codeWriter.writeLine(terms.join(" ") + " {");
+        codeWriter.writeLine(terms.join(" "));
+        codeWriter.writeLine("{");
+        codeWriter.writeLine();
         codeWriter.indent();
 
         // Literals
@@ -275,7 +278,8 @@ define(function (require, exports, module) {
         if (_extends.length > 0) {
             terms.push(": " + _.map(_extends, function (e) { return e.name; }).join(", "));
         }
-        codeWriter.writeLine(terms.join(" ") + " {");
+        codeWriter.writeLine(terms.join(" "));
+        codeWriter.writeLine("{");
         codeWriter.writeLine();
         codeWriter.indent();
 
@@ -285,10 +289,12 @@ define(function (require, exports, module) {
             this.writeMemberVariable(codeWriter, elem.attributes[i], options);
             codeWriter.writeLine();
         }
+
         // (from associations)
         var associations = Repository.getRelationshipsOf(elem, function (rel) {
             return (rel instanceof type.UMLAssociation);
         });
+
         for (i = 0, len = associations.length; i < len; i++) {
             var asso = associations[i];
             if (asso.end1.reference === elem && asso.end2.navigable === true) {
@@ -341,7 +347,7 @@ define(function (require, exports, module) {
         // Doc
         var doc = elem.documentation.trim();
         if (ProjectManager.getProject().author && ProjectManager.getProject().author.length > 0) {
-            doc += "\n@author " + ProjectManager.getProject().author;
+            doc += "\nAuthor: " + ProjectManager.getProject().author;
         }
         this.writeDoc(codeWriter, doc, options);
 
@@ -378,7 +384,8 @@ define(function (require, exports, module) {
 //            }
 //        }
 
-        codeWriter.writeLine(terms.join(" ") + " {");
+        codeWriter.writeLine(terms.join(" "));
+        codeWriter.writeLine("{");
         codeWriter.writeLine();
         codeWriter.indent();
 
@@ -392,6 +399,7 @@ define(function (require, exports, module) {
             this.writeMemberVariable(codeWriter, elem.attributes[i], options);
             codeWriter.writeLine();
         }
+
         // (from associations)
         var associations = Repository.getRelationshipsOf(elem, function (rel) {
             return (rel instanceof type.UMLAssociation);
@@ -487,7 +495,8 @@ define(function (require, exports, module) {
             }
         }
 
-        codeWriter.writeLine(terms.join(" ") + " {");
+        codeWriter.writeLine(terms.join(" "));
+        codeWriter.writeLine("{");
         codeWriter.writeLine();
         codeWriter.indent();
 
@@ -501,6 +510,7 @@ define(function (require, exports, module) {
             this.writeMemberVariable(codeWriter, elem.attributes[i], options);
             codeWriter.writeLine();
         }
+
         // (from associations)
         var associations = Repository.getRelationshipsOf(elem, function (rel) {
             return (rel instanceof type.UMLAssociation);
@@ -612,40 +622,12 @@ define(function (require, exports, module) {
             if (skipBody === true || _.contains(_modifiers, "abstract")) {
                 codeWriter.writeLine(terms.join(" ") + ";");
             } else {
-                codeWriter.writeLine(terms.join(" ") + " {");
+                codeWriter.writeLine(terms.join(" "));
+                codeWriter.writeLine("{");
                 codeWriter.indent();
-                codeWriter.writeLine("// TODO implement here");
 
-                // return statement
-                if (returnParam) {
-                    var returnType = this.getType(returnParam);
-                    if (returnType === "bool") {
-                        codeWriter.writeLine("return False;");
-                    } else if (returnType === "byte"
-                               || returnType === "int"
-                               || returnType === "sbyte"
-                               || returnType === "short"
-                               || returnType === "uint"
-                               || returnType === "ulong"
-                               || returnType === "ushort") {
-                        codeWriter.writeLine("return 0;");
-                    } else if (returnType === "float") {
-                        codeWriter.writeLine("return 0.0F;");
-                    } else if (returnType === "double") {
-                        codeWriter.writeLine("return 0.0D;");
-                    } else if (returnType === "long") {
-                        codeWriter.writeLine("return 0.0L;");
-                    } else if (returnType === "decimal") {
-                        codeWriter.writeLine("return 0.0M;");
-                    } else if (returnType === "char") {
-                        codeWriter.writeLine("return '\\0';");
-                    } else if (returnType === "string") {
-                        codeWriter.writeLine('return "";');
-                    } else {
-                        codeWriter.writeLine("return null;");
-                    }
-                }
-
+                codeWriter.writeLine("throw new NotImplementedException();");
+                
                 codeWriter.outdent();
                 codeWriter.writeLine("}");
             }
@@ -718,17 +700,18 @@ define(function (require, exports, module) {
 
             // property
             if (elem.stereotype === "property") {
-                codeWriter.writeLine(terms.join(" ") + " {");
+                codeWriter.writeLine(terms.join(" "));
+                codeWriter.writeLine("{");
                 codeWriter.indent();
+
                 if (elem.isReadOnly) {
-                    codeWriter.writeLine("get {");
-                    codeWriter.writeLine("}");
+                    codeWriter.writeLine("get;");
                 } else {
                     codeWriter.writeLine("get; set;");
                 }
+
                 codeWriter.outdent();
                 codeWriter.writeLine("}");
-
             } else {
                 codeWriter.writeLine(terms.join(" ") + ";");
             }
@@ -753,7 +736,8 @@ define(function (require, exports, module) {
                 terms.push(visibility);
             }
             terms.push(elem.name + "()");
-            codeWriter.writeLine(terms.join(" ") + " {");
+            codeWriter.writeLine(terms.join(" "));
+            codeWriter.writeLine("{");
             codeWriter.writeLine("}");
         }
     };
