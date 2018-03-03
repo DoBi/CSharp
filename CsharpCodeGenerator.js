@@ -120,6 +120,7 @@ define(function (require, exports, module) {
 
                 fullPath = path + "/" + elem.name + ".cs";
                 codeWriter = new CodeGenUtils.CodeWriter(this.getIndentString(options));
+
                 codeWriter.writeLine();
                 codeWriter.writeLine("using System;");
                 codeWriter.writeLine("using System.Collections.Generic;");
@@ -136,6 +137,22 @@ define(function (require, exports, module) {
                 console.log('Class generate' + fullPath);
 
                 codeWriter = new CodeGenUtils.CodeWriter(this.getIndentString(options));
+
+                if (ProjectManager.getProject().author && ProjectManager.getProject().author.length > 0) {
+                    codeWriter.writeLine("// <copyright file=\"" + elem.name + ".cs\" author=\"" + ProjectManager.getProject().author + "\">");
+                } else if (ProjectManager.getProject().company && ProjectManager.getProject().company.length > 0) {
+                    codeWriter.writeLine("// <copyright file=\"" + elem.name + ".cs\" company=\"" + ProjectManager.getProject().company + "\">");
+                } else {
+                    codeWriter.writeLine("// <copyright file=\"" + elem.name + ".cs\">");
+                }
+
+                if (ProjectManager.getProject().copyright && ProjectManager.getProject().copyright.length > 0) {
+                    codeWriter.writeLine("// " + ProjectManager.getProject().copyright);
+                }
+
+                codeWriter.writeLine("// </copyright>");
+                codeWriter.writeLine("// <summary>" + elem.documentation + "</summary>");
+
                 codeWriter.writeLine();
                 codeWriter.writeLine("using System;");
                 codeWriter.writeLine("using System.Collections.Generic;");
@@ -153,6 +170,22 @@ define(function (require, exports, module) {
             console.log('Interface generate' + fullPath);
 
             codeWriter = new CodeGenUtils.CodeWriter(this.getIndentString(options));
+
+            if (ProjectManager.getProject().author && ProjectManager.getProject().author.length > 0) {
+                codeWriter.writeLine("// <copyright file=\"" + elem.name + ".cs\" author=\"" + ProjectManager.getProject().author + "\">");
+            } else if (ProjectManager.getProject().company && ProjectManager.getProject().company.length > 0) {
+                codeWriter.writeLine("// <copyright file=\"" + elem.name + ".cs\" company=\"" + ProjectManager.getProject().company + "\">");
+            } else {
+                codeWriter.writeLine("// <copyright file=\"" + elem.name + ".cs\">");
+            }
+
+            if (ProjectManager.getProject().copyright && ProjectManager.getProject().copyright.length > 0) {
+                codeWriter.writeLine("// " + ProjectManager.getProject().copyright);
+            }
+
+            codeWriter.writeLine("// </copyright>");
+            codeWriter.writeLine("// <summary>" + elem.documentation + "</summary>");
+
             codeWriter.writeLine();
             codeWriter.writeLine("using System;");
             codeWriter.writeLine("using System.Collections.Generic;");
@@ -627,7 +660,7 @@ define(function (require, exports, module) {
                 codeWriter.indent();
 
                 codeWriter.writeLine("throw new NotImplementedException();");
-                
+
                 codeWriter.outdent();
                 codeWriter.writeLine("}");
             }
